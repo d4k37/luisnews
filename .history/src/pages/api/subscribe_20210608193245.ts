@@ -24,13 +24,12 @@ export default async (req: NextApiRequest, res: NextApiResponse)=>{
             ],
             mode: 'subscription',
             allow_promotion_codes: true,
-            success_url: process.env.STRIPE_SUCCESS_URL,
+            success_url: JSON(process.env.STRIPE_SUCCESS_URL),
             cancel_url: process.env.STRIPE_CANCEL_URL
         })
 
         return res.status(200).json({ sessionId: stripeCheckoutSession.id})
-    } 
-    else{
+    } else{
         res.setHeader('Allow', 'POST')
         res.status(405).end('Method not Allowed')
     }

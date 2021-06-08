@@ -16,7 +16,7 @@ export default async (req: NextApiRequest, res: NextApiResponse)=>{
         })
         
         const stripeCheckoutSession = await stripe.checkout.sessions.create({
-            customer: null,
+            customer: null ,
             payment_method_types: ['card'],
             billing_address_collection: 'required',
             line_items: [
@@ -29,8 +29,7 @@ export default async (req: NextApiRequest, res: NextApiResponse)=>{
         })
 
         return res.status(200).json({ sessionId: stripeCheckoutSession.id})
-    } 
-    else{
+    } else{
         res.setHeader('Allow', 'POST')
         res.status(405).end('Method not Allowed')
     }
