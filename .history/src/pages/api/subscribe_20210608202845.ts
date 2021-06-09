@@ -4,14 +4,7 @@ import {getSession} from 'next-auth/client'
 import { fauna } from "../../services/fauna";
 import {query as q} from 'faunadb'
 
-type User={
-    ref:{
-        id:string;
-    }
-    data:{
-        stripe_customer_id:string;
-    }
-}
+
 
 export default async (req: NextApiRequest, res: NextApiResponse)=>{
 
@@ -20,7 +13,7 @@ export default async (req: NextApiRequest, res: NextApiResponse)=>{
         
         const session = await getSession({req})
 
-        const user = await fauna.query<User>(
+        const user = await fauna.query(
             q.Get(
                 q.Match(
                     q.Index('user_by_email'),
@@ -29,32 +22,18 @@ export default async (req: NextApiRequest, res: NextApiResponse)=>{
             )
         )
    
-
-        let customerId = user.data.stripe_customer_id
-
-        if(!customerId){
-            const stripeCustomer = await stripe.customers.create({
-                email: session.user.email,
-            })
-            await fauna.query(
-                q.Update(
-                    q.Ref(q.Collection('users'), user.ref.id),
-                    {
-                        data: {
-                            stripe_customer_id: stripeCustomer.id,
-                        }
-                    }
-                )
-            )
-
-            customerId = stripeCustomer.id 
-        }
-
+        const stripeCustomer = await stripe.customers.create({
+            email: session.user.email,
+        })
 
         
+
+        await fauna.query(
+            q.Update()
+        )
         
         const stripeCheckoutSession = await stripe.checkout.sessions.create({
-            customer: customerId,
+            customer: stripeCustomer.id,
             payment_method_types: ['card'],
             billing_address_collection: 'required',
             line_items: [
