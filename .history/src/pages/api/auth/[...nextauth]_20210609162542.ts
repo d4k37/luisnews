@@ -18,7 +18,7 @@ export default NextAuth({
   callbacks:{
     async session(session){
     try{
-      console.log(session)
+
     
       session.user.email
       
@@ -53,7 +53,7 @@ export default NextAuth({
     } catch{ 
       return {
         ...session,
-        activeSubscription: null,
+      
       }
     }
     },
