@@ -46,7 +46,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, params}) =>{
     const {slug} = params;
 
 
-    if(session?.activeSubscription){
+    if(session.activeSubscription){
          return{
              redirect: {
                  destination:'/',
@@ -60,7 +60,7 @@ export const getServerSideProps: GetServerSideProps = async ({req, params}) =>{
   const post = {
       slug,
       title: RichText.asText(response.data.title),
-      content: RichText.asHtml(response.data.content),
+      content: RichText.asHtml(response.data.content.splice(0, 1)),
       updatedAt: new Date(response.last_publication_date).toLocaleDateString('pq-BR',{
         day:'2-digit',
         month: 'long',

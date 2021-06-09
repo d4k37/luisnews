@@ -13,7 +13,7 @@ export default NextAuth({
     }),
   ],
 
-
+ 
 
   callbacks:{
     async session(session){
